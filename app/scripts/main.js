@@ -43,8 +43,23 @@ function magic(txt){
   newLineArray.pop(); //Remove empty last element
   for(i = 0; i < newLineArray.length; i++){
     line = newLineArray[i].split(':');
-    line[1] = line[1].substr(1);
+    line[1] = parseInt(line[1],2);
+    if(i < 32){
+      addToPageTableGui(i%16, line[0], line[1]);
+    }
     console.log(line);
   }
 };
 
+function addToPageTableGui(frameNumber, procNumber, pageNumber){
+  var $row = $("<div>", {class: 'row', id:'frame' + frameNumber});
+  var $frameCol = $("<div>", {class: 'col-xs-4 text-center'}).text(frameNumber);
+  var $processCol =$("<div>", {class: 'col-xs-4 text-center'}).text(procNumber);
+  var $pageCol = $("<div>" , {class: 'col-xs-4 text-center'}).text(pageNumber);
+  $row.append($frameCol, $processCol, $pageCol);
+  if($('#frame'+frameNumber).length){
+    $('#frame'+frameNumber).replaceWith($row);
+  } else {
+    $row.insertBefore('.control-buttons')    
+  }  
+}
