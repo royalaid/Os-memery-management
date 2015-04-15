@@ -2,38 +2,49 @@
 console.log('\'Allo \'Allo!');
 
 var reader = new FileReader();
-
-$('#fileBox').fileinput({
-  uploadUrl: 'parseFile()',
-  showPreview: false
-})
-
-
-
-$('#fileBox').submit( function(e) {
-  console.log('Uploaded')
-});
-
-
-$('#fileBox').change( function(files) {
-  var fileList = this.files; /* now you can work with the file list */
-  console.log(fileList[0]);
-  reader.readAsText(fileList[0]);
-});
-
-
-
 var txt;
 
-$('.fileinput-upload-button').click(function (e) {
-  $()
-  console.log('you');
+$(document).ready( function() {
+  $('.btn-file :file').on('fileselect', function(event, numFiles, label) {
+    $('#fileBox button').prop('disabled', false);
+    var input = $(this).parents('.input-group').find(':text'),
+      log = numFiles > 1 ? numFiles + ' files selected' : label;
+    if( input.length ) {
+      input.val(log);
+    } else {
+      if( log ) alert(log);
+    }        
+  });
 });
 
+$(document).on('change', '.btn-file :file', function() {
+  var input = $(this),
+  numFiles = input.get(0).files ? input.get(0).files.length : 1,
+  label = input.val().replace(/\\/g, '/').replace(/.*\//, '');
+  input.trigger('fileselect', [numFiles, label]);
+});
+
+$('#fileBox').submit(function (e) {
+  e.preventDefault();
+  $('.page-table').removeClass('hidden');
+  $('#fileBox').hide();
+  reader.readAsText($("#fileBox input[type=file]").get(0).files[0]);
+});
 
 reader.onload = (function(txt) {
   return function(e){
-    console.log(e.target.result)
+    magic(e.target.result)
   };
   console.log(txt);
 }(txt));
+
+function magic(txt){
+  var newLineArray = txt.split('\n');
+  newLineArray.pop(); //Remove empty last element
+  for(i = 0; i < newLineArray.length; i++){
+    line = newLineArray[i].split(':');
+    line[1] = line[1].substr(1);
+    console.log(line);
+  }
+};
+
